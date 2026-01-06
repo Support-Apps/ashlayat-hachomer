@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>המסע לתוך החומר - אשליית המזון</title>
+    <meta name="description" content="בס״ד - מסע אינטראקטיבי לתוך מבנה החומר">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;800&family=Rubik:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a1a2e 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffd700, #ff6b9d, #c084fc, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5)); }
+            50% { filter: drop-shadow(0 0 40px rgba(192, 132, 252, 0.8)); }
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #a5b4fc;
+            font-weight: 300;
+        }
+
+        .breadcrumb {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            padding: 0 10px;
+        }
+
+        .breadcrumb-item {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .breadcrumb-item.active {
+            background: linear-gradient(135deg, #ffd700, #ff6b9d);
+            color: #000;
+            font-weight: 600;
+        }
+
+        .breadcrumb-item:hover:not(.active) {
+            border-color: #ffd700;
+            transform: translateY(-2px);
+        }
+
+        /* Food Selection Screen */
+        .food-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .food-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 25px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .food-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent, rgba(255, 215, 0, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .food-item:hover::before {
+            opacity: 1;
+        }
+
+        .food-item:hover {
+            transform: translateY(-10px) scale(1.05);
+            border-color: #ffd700;
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.2);
+        }
+
+        .food-emoji {
+            font-size: 4rem;
+            display: block;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
+            transition: transform 0.3s;
+        }
+
+        .food-item:hover .food-emoji {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .food-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+
+        /* Zoom View */
+        .zoom-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .zoom-container.active {
+            display: flex;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .visualization {
+            width: 100%;
+            max-width: 500px;
+            aspect-ratio: 1;
+            position: relative;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .level-content {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .level-content.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: zoomIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes zoomIn {
+            from { 
+                opacity: 0; 
+                transform: scale(0.3) rotate(-10deg); 
+            }
+            to { 
+                opacity: 1; 
+                transform: scale(1) rotate(0deg); 
+            }
+        }
+
+        /* Food Level */
+        .food-display {
+            font-size: 10rem;
+            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* Atoms Level */
+        .atoms-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+
+        .atom {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            animation: atomBounce 2s ease-in-out infinite;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .atom:hover {
+            transform: scale(1.2) !important;
+        }
+
+        .atom-C { 
+            background: linear-gradient(135deg, #4a4a4a, #2d2d2d);
+            box-shadow: 0 0 30px rgba(74, 74, 74, 0.5);
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            animation-delay: 0s;
+        }
+
+        .atom-H { 
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            box-shadow: 0 0 20px rgba(96, 165, 250, 0.5);
+            width: 50px; height: 50px;
+            font-size: 1rem;
+        }
+
+        .atom-O { 
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.5);
+            width: 65px; height: 65px;
+        }
+
+        .atom-N { 
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            box-shadow: 0 0 25px rgba(34, 197, 94, 0.5);
+            width: 60px; height: 60px;
+        }
+
+        @keyframes atomBounce {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        .atom-H:nth-child(2) { top: 10%; left: 30%; animation-delay: 0.2s; }
+        .atom-H:nth-child(3) { top: 10%; right: 30%; animation-delay: 0.4s; }
+        .atom-H:nth-child(4) { bottom: 20%; left: 10%; animation-delay: 0.6s; }
+        .atom-H:nth-child(5) { bottom: 20%; right: 10%; animation-delay: 0.8s; }
+        .atom-O:nth-child(6) { top: 30%; left: 5%; animation-delay: 0.3s; }
+        .atom-O:nth-child(7) { top: 30%; right: 5%; animation-delay: 0.5s; }
+        .atom-N:nth-child(8) { bottom: 5%; left: 50%; transform: translateX(-50%); animation-delay: 0.7s; }
+
+        /* Protons/Electrons Level */
+        .atom-structure {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+
+        .nucleus {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .proton, .neutron {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            animation: nucleusPulse 1.5s ease-in-out infinite;
+        }
+
+        .proton {
+            background: linear-gradient(135deg, #ef4444, #b91c1c);
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+        }
+
+        .neutron {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            box-shadow: 0 0 15px rgba(107, 114, 128, 0.6);
+        }
+
+        @keyframes nucleusPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .electron-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px dashed rgba(96, 165, 250, 0.3);
+            border-radius: 50%;
+        }
+
+        .orbit-1 { width: 180px; height: 180px; }
+        .orbit-2 { width: 250px; height: 250px; }
+
+        .electron {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: linear-gradient(135deg, #60a5fa, #2563eb);
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(96, 165, 250, 0.8), 0 0 40px rgba(96, 165, 250, 0.4);
+        }
+
+        .orbit-1 .electron {
+            animation: orbit1 2s linear infinite;
+        }
+
+        .orbit-2 .electron {
+            animation: orbit2 3s linear infinite;
+        }
+
+        @keyframes orbit1 {
+            from { transform: rotate(0deg) translateX(90px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(90px) rotate(-360deg); }
+        }
+
+        @keyframes orbit2 {
+            from { transform: rotate(0deg) translateX(125px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(125px) rotate(-360deg); }
+        }
+
+        /* Quarks Level */
+        .quarks-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+        }
+
+        .proton-large {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.2), transparent);
+            border-radius: 50%;
+            border: 3px solid rgba(239, 68, 68, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quark {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            animation: quarkVibrate 0.5s ease-in-out infinite;
+        }
+
+        .quark-up {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            box-shadow: 0 0 25px rgba(251, 191, 36, 0.6);
+        }
+
+        .quark-down {
+            background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+            box-shadow: 0 0 25px rgba(167, 139, 250, 0.6);
+        }
+
+        .quark:nth-child(1) { top: 20%; left: 50%; transform: translateX(-50%); animation-delay: 0s; }
+        .quark:nth-child(2) { bottom: 25%; left: 20%; animation-delay: 0.1s; }
+        .quark:nth-child(3) { bottom: 25%; right: 20%; animation-delay: 0.2s; }
+
+        @keyframes quarkVibrate {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            25% { transform: translateX(-45%) scale(1.05); }
+            75% { transform: translateX(-55%) scale(0.95); }
+        }
+
+        .gluon-line {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(90deg, #22c55e, transparent, #22c55e);
+            animation: gluonPulse 1s ease-in-out infinite;
+        }
+
+        .gluon-line:nth-child(4) { transform: translate(-50%, -50%) rotate(0deg); }
+        .gluon-line:nth-child(5) { transform: translate(-50%, -50%) rotate(60deg); animation-delay: 0.3s; }
+        .gluon-line:nth-child(6) { transform: translate(-50%, -50%) rotate(120deg); animation-delay: 0.6s; }
+
+        @keyframes gluonPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* String Level */
+        .string-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .string-visualization {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+
+        .string {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: 4px;
+            background: linear-gradient(90deg, #ffd700, #ff6b9d, #c084fc, #60a5fa, #ffd700);
+            border-radius: 2px;
+            animation: stringVibrate 0.3s ease-in-out infinite;
+        }
+
+        @keyframes stringVibrate {
+            0%, 100% { 
+                transform: translate(-50%, -50%) scaleY(1);
+                filter: blur(0px);
+            }
+            25% { 
+                transform: translate(-50%, -50%) scaleY(3) scaleX(0.98);
+                filter: blur(1px);
+            }
+            50% { 
+                transform: translate(-50%, -50%) scaleY(0.5) scaleX(1.02);
+                filter: blur(0px);
+            }
+            75% { 
+                transform: translate(-50%, -50%) scaleY(2) scaleX(0.99);
+                filter: blur(1px);
+            }
+        }
+
+        .string-wave {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+        }
+
+        .string-wave svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .wave-path {
+            fill: none;
+            stroke: url(#waveGradient);
+            stroke-width: 3;
+            animation: waveDance 2s ease-in-out infinite;
+        }
+
+        @keyframes waveDance {
+            0%, 100% { d: path('M 20 100 Q 50 50, 100 100 T 180 100'); }
+            50% { d: path('M 20 100 Q 50 150, 100 100 T 180 100'); }
+        }
+
+        .dimension-hint {
+            position: absolute;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+            white-space: nowrap;
+        }
+
+        .dim-1 { top: 10%; left: 50%; transform: translateX(-50%); }
+        .dim-2 { bottom: 10%; left: 50%; transform: translateX(-50%); }
+        .dim-3 { top: 50%; left: 5%; transform: translateY(-50%); }
+        .dim-4 { top: 50%; right: 5%; transform: translateY(-50%); }
+
+        /* Unified Field Level */
+        .unified-field {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .field-background {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, 
+                rgba(255, 215, 0, 0.1) 0%, 
+                rgba(192, 132, 252, 0.1) 30%, 
+                rgba(96, 165, 250, 0.1) 60%, 
+                transparent 100%);
+            animation: fieldPulse 4s ease-in-out infinite;
+        }
+
+        @keyframes fieldPulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .field-rings {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .field-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 1px solid;
+            animation: ringExpand 3s ease-out infinite;
+        }
+
+        .field-ring:nth-child(1) { animation-delay: 0s; border-color: rgba(255, 215, 0, 0.5); }
+        .field-ring:nth-child(2) { animation-delay: 0.5s; border-color: rgba(255, 107, 157, 0.5); }
+        .field-ring:nth-child(3) { animation-delay: 1s; border-color: rgba(192, 132, 252, 0.5); }
+        .field-ring:nth-child(4) { animation-delay: 1.5s; border-color: rgba(96, 165, 250, 0.5); }
+        .field-ring:nth-child(5) { animation-delay: 2s; border-color: rgba(34, 197, 94, 0.5); }
+        .field-ring:nth-child(6) { animation-delay: 2.5s; border-color: rgba(255, 215, 0, 0.5); }
+
+        @keyframes ringExpand {
+            0% { 
+                width: 0; 
+                height: 0; 
+                opacity: 1; 
+            }
+            100% { 
+                width: 300px; 
+                height: 300px; 
+                opacity: 0; 
+            }
+        }
+
+        .emptiness-text {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .emptiness-text .main {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffd700, #ff6b9d, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textGlow 2s ease-in-out infinite;
+        }
+
+        .emptiness-text .sub {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 10px;
+        }
+
+        @keyframes textGlow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+
+        /* Info Panel */
+        .info-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 20px auto;
+            max-width: 600px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .info-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffd700;
+            margin-bottom: 15px;
+        }
+
+        .info-description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #cbd5e1;
+        }
+
+        .info-highlight {
+            color: #ff6b9d;
+            font-weight: 600;
+        }
+
+        /* Navigation */
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-family: 'Heebo', sans-serif;
+            font-weight: 600;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn.zoom-in {
+            background: linear-gradient(135deg, #ffd700, #ff6b9d);
+            color: #000;
+        }
+
+        .nav-btn.zoom-out {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-btn.back {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .bsd {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 1.2rem;
+            color: #ffd700;
+            font-weight: 600;
+            z-index: 100;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .food-selection {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .food-emoji {
+                font-size: 3rem;
+            }
+
+            .visualization {
+                max-width: 300px;
+            }
+
+            .breadcrumb-item {
+                padding: 6px 12px;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    
+    <div class="bsd">בס״ד</div>
+
+    <div class="container">
+        <header>
+            <h1>🔬 המסע לתוך החומר</h1>
+            <p class="subtitle">מג'אנק פוד ועד לריקנות המוחלטת</p>
+        </header>
+
+        <div class="breadcrumb" id="breadcrumb">
+            <div class="breadcrumb-item active" onclick="goToLevel(-1)">📋 תפריט</div>
+            <div class="breadcrumb-item" onclick="goToLevel(1)">⚛️ אטומים</div>
+            <div class="breadcrumb-item" onclick="goToLevel(2)">🔴 פרוטונים</div>
+            <div class="breadcrumb-item" onclick="goToLevel(3)">✨ קווארקים</div>
+            <div class="breadcrumb-item" onclick="goToLevel(4)">〰️ מיתרים</div>
+            <div class="breadcrumb-item" onclick="goToLevel(5)">🌌 השדה המאוחד</div>
+        </div>
+
+        <!-- Food Selection -->
+        <div class="food-selection" id="foodSelection">
+            <div class="food-item" onclick="selectFood('🍕', 'פיצה')">
+                <span class="food-emoji">🍕</span>
+                <span class="food-name">פיצה</span>
+            </div>
+            <div class="food-item" onclick="selectFood('🧆', 'פלאפל')">
+                <span class="food-emoji">🧆</span>
+                <span class="food-name">פלאפל</span>
+            </div>
+            <div class="food-item" onclick="selectFood('🥙', 'שווארמה')">
+                <span class="food-emoji">🥙</span>
+                <span class="food-name">שווארמה</span>
+            </div>
+            <div class="food-item" onclick="selectFood('🥟', 'בורקס')">
+                <span class="food-emoji">🥟</span>
+                <span class="food-name">בורקס</span>
+            </div>
+            <div class="food-item" onclick="selectFood('🍔', 'המבורגר')">
+                <span class="food-emoji">🍔</span>
+                <span class="food-name">המבורגר</span>
+            </div>
+        </div>
+
+        <!-- Zoom Container -->
+        <div class="zoom-container" id="zoomContainer">
+            <div class="visualization" id="visualization">
+                <!-- Level 0: Food -->
+                <div class="level-content" id="level0">
+                    <span class="food-display" id="selectedFoodEmoji">🍕</span>
+                </div>
+
+                <!-- Level 1: Atoms -->
+                <div class="level-content" id="level1">
+                    <div class="atoms-container">
+                        <div class="atom atom-C">C</div>
+                        <div class="atom atom-H">H</div>
+                        <div class="atom atom-H">H</div>
+                        <div class="atom atom-H">H</div>
+                        <div class="atom atom-H">H</div>
+                        <div class="atom atom-O">O</div>
+                        <div class="atom atom-O">O</div>
+                        <div class="atom atom-N">N</div>
+                    </div>
+                </div>
+
+                <!-- Level 2: Protons/Electrons -->
+                <div class="level-content" id="level2">
+                    <div class="atom-structure">
+                        <div class="electron-orbit orbit-2">
+                            <div class="electron"></div>
+                        </div>
+                        <div class="electron-orbit orbit-1">
+                            <div class="electron"></div>
+                        </div>
+                        <div class="nucleus">
+                            <div class="proton">P+</div>
+                            <div class="neutron">N</div>
+                            <div class="proton">P+</div>
+                            <div class="neutron">N</div>
+                            <div class="proton">P+</div>
+                            <div class="neutron">N</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Level 3: Quarks -->
+                <div class="level-content" id="level3">
+                    <div class="quarks-container">
+                        <div class="proton-large">
+                            <div class="quark quark-up">u</div>
+                            <div class="quark quark-up">u</div>
+                            <div class="quark quark-down">d</div>
+                            <div class="gluon-line"></div>
+                            <div class="gluon-line"></div>
+                            <div class="gluon-line"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Level 4: Strings -->
+                <div class="level-content" id="level4">
+                    <div class="string-container">
+                        <div class="string-visualization">
+                            <div class="string"></div>
+                            <div class="string-wave">
+                                <svg viewBox="0 0 200 200">
+                                    <defs>
+                                        <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" style="stop-color:#ffd700"/>
+                                            <stop offset="50%" style="stop-color:#ff6b9d"/>
+                                            <stop offset="100%" style="stop-color:#c084fc"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <path class="wave-path" d="M 20 100 Q 50 50, 100 100 T 180 100"/>
+                                </svg>
+                            </div>
+                            <span class="dimension-hint dim-1">ממד 1</span>
+                            <span class="dimension-hint dim-2">ממד 2</span>
+                            <span class="dimension-hint dim-3">ממד 3</span>
+                            <span class="dimension-hint dim-4">...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Level 5: Unified Field -->
+                <div class="level-content" id="level5">
+                    <div class="unified-field">
+                        <div class="field-background"></div>
+                        <div class="field-rings">
+                            <div class="field-ring"></div>
+                            <div class="field-ring"></div>
+                            <div class="field-ring"></div>
+                            <div class="field-ring"></div>
+                            <div class="field-ring"></div>
+                            <div class="field-ring"></div>
+                        </div>
+                        <div class="emptiness-text">
+                            <div class="main">אֵין סוֹף</div>
+                            <div class="sub">ריקנות מוחלטת</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-panel" id="infoPanel">
+                <h3 class="info-title" id="infoTitle">בחר מאכל</h3>
+                <p class="info-description" id="infoDescription">לחץ על אחד המאכלים כדי להתחיל במסע לתוך החומר</p>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="nav-btn zoom-out" id="btnZoomOut" onclick="zoomOut()">
+                    <span>🔍−</span> החוצה
+                </button>
+                <button class="nav-btn zoom-in" id="btnZoomIn" onclick="zoomIn()">
+                    פנימה <span>🔍+</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function resetApp() {
+            alert('מאפס את האפליקציה');
+            currentLevel = -1;
+            selectedFood = null;
+            document.getElementById('foodSelection').style.display = 'grid';
+            document.getElementById('zoomContainer').classList.remove('active');
+            updateBreadcrumb();
+        }
+
+        let currentLevel = -1;
+        let selectedFood = null;
+
+        const levelInfo = [
+            {
+                title: "🍕 המאכל שבחרת",
+                description: "מה שנראה לנו כמזון מוצק - פיצה, פלאפל, שווארמה... נראה לעין כ<span class='info-highlight'>חומר ממשי</span>. אבל בואו נכנס פנימה ונראה ממה הוא באמת עשוי."
+            },
+            {
+                title: "⚛️ רמת האטומים",
+                description: "כל המזון מורכב מ<span class='info-highlight'>אטומים</span>: פחמן (C), מימן (H), חמצן (O), חנקן (N). אבל האטום עצמו - <span class='info-highlight'>99.9999999% ממנו הוא חלל ריק!</span>"
+            },
+            {
+                title: "🔴 פרוטונים ואלקטרונים",
+                description: "בתוך האטום יש <span class='info-highlight'>גרעין</span> זעיר עם פרוטונים וניוטרונים, ו<span class='info-highlight'>אלקטרונים</span> שמסתובבים סביבו. אבל מה בתוך הפרוטון?"
+            },
+            {
+                title: "✨ שלושת הקווארקים",
+                description: "כל פרוטון מורכב מ<span class='info-highlight'>3 קווארקים</span>: שני Up (u) ואחד Down (d), מוחזקים יחד על ידי <span class='info-highlight'>גלואונים</span>. קווארקים הם כמעט חסרי מסה!"
+            },
+            {
+                title: "〰️ מיתרים רוטטים",
+                description: "לפי <span class='info-highlight'>תורת המיתרים</span>, כל חלקיק הוא למעשה <span class='info-highlight'>מיתר זעיר</span> שרוטט בתדרים שונים. המיתר רוטט ב-<span class='info-highlight'>11 ממדים</span>!"
+            },
+            {
+                title: "🌌 השדה המאוחד",
+                description: "<span class='info-highlight'>אין חומר בכלל!</span> הכל הוא <span class='info-highlight'>שדה אנרגיה אחד מאוחד</span> - תנודות בשדה הקוונטי. ה'פיצה' שאכלת? רק <span class='info-highlight'>גלים באוקיינוס אינסופי של אנרגיה</span>."
+            }
+        ];
+
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 3 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.animationDelay = Math.random() * 2 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        function selectFood(emoji, name) {
+            selectedFood = { emoji, name };
+            document.getElementById('selectedFoodEmoji').textContent = emoji;
+            document.getElementById('foodSelection').style.display = 'none';
+            document.getElementById('zoomContainer').classList.add('active');
+            currentLevel = 0;
+            showLevel(0);
+            updateBreadcrumb();
+        }
+
+        function showLevel(level) {
+            for (let i = 0; i <= 5; i++) {
+                const levelEl = document.getElementById('level' + i);
+                if (levelEl) {
+                    levelEl.classList.remove('active');
+                }
+            }
+
+            const currentLevelEl = document.getElementById('level' + level);
+            if (currentLevelEl) {
+                currentLevelEl.classList.add('active');
+            }
+
+            if (level === 0 && selectedFood) {
+                document.getElementById('infoTitle').textContent = selectedFood.emoji + ' ' + selectedFood.name;
+            } else {
+                document.getElementById('infoTitle').textContent = levelInfo[level].title;
+            }
+            document.getElementById('infoDescription').innerHTML = levelInfo[level].description;
+
+            document.getElementById('btnZoomOut').disabled = level === 0;
+            document.getElementById('btnZoomIn').disabled = level === 5;
+
+            updateBreadcrumb();
+        }
+
+        function updateBreadcrumb() {
+            const items = document.querySelectorAll('.breadcrumb-item');
+            items.forEach(function(item, index) {
+                item.classList.remove('active');
+                if (index === 0 && currentLevel === -1) {
+                    item.classList.add('active');
+                } else if (index === currentLevel + 1) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        function goToLevel(level) {
+            if (level === -1) {
+                currentLevel = -1;
+                selectedFood = null;
+                document.getElementById('foodSelection').style.display = 'grid';
+                document.getElementById('zoomContainer').classList.remove('active');
+                updateBreadcrumb();
+                return;
+            }
+            
+            if (currentLevel === -1 && level >= 0) return;
+            if (level < 0 || level > 5) return;
+            
+            currentLevel = level;
+            showLevel(level);
+        }
+
+        function zoomIn() {
+            if (currentLevel < 5) {
+                currentLevel++;
+                showLevel(currentLevel);
+            }
+        }
+
+        function zoomOut() {
+            if (currentLevel > 0) {
+                currentLevel--;
+                showLevel(currentLevel);
+            }
+        }
+
+        createStars();
+    </script>
+</body>
+</html>
