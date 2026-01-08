@@ -113,41 +113,74 @@
         .food-selection {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            padding: 20px;
+            gap: 10px;
+            padding: 10px;
             max-width: 1000px;
             margin: 0 auto;
         }
 
+        .food-category {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
         .food-category-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             color: #ffd700;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 600;
-            margin-top: 15px;
-            margin-bottom: 5px;
-            padding-right: 10px;
-            border-right: 3px solid #ffd700;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .food-category-title:hover {
+            background: rgba(255, 215, 0, 0.2);
+        }
+
+        .category-arrow {
+            transition: transform 0.3s;
+            font-size: 0.8rem;
+        }
+
+        .food-category.open .category-arrow {
+            transform: rotate(180deg);
         }
 
         .food-row {
-            display: flex;
+            display: none;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 10px;
+            padding: 15px;
             justify-content: center;
+        }
+
+        .food-category.open .food-row {
+            display: flex;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .food-item {
             background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 20px 15px;
+            border-radius: 15px;
+            padding: 15px 10px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.3s;
             border: 2px solid transparent;
-            position: relative;
-            overflow: hidden;
-            min-width: 100px;
-            flex: 0 0 auto;
+            min-width: 80px;
+            max-width: 100px;
+            flex: 1 1 80px;
         }
 
         .food-item::before {
@@ -167,25 +200,25 @@
         }
 
         .food-item:hover {
-            transform: translateY(-10px) scale(1.05);
+            transform: translateY(-5px) scale(1.05);
             border-color: #ffd700;
-            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.2);
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.2);
         }
 
         .food-emoji {
-            font-size: 3rem;
+            font-size: 2.5rem;
             display: block;
-            margin-bottom: 10px;
-            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
+            margin-bottom: 8px;
+            filter: drop-shadow(0 3px 10px rgba(0,0,0,0.3));
             transition: transform 0.3s;
         }
 
         .food-item:hover .food-emoji {
-            transform: scale(1.2) rotate(5deg);
+            transform: scale(1.15);
         }
 
         .food-name {
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: #e2e8f0;
         }
@@ -771,22 +804,124 @@
         }
 
         /* Responsive */
-        @media (max-width: 600px) {
-            .food-selection {
-                grid-template-columns: repeat(2, 1fr);
+        @media (max-width: 768px) {
+            header {
+                padding: 30px 15px 20px;
             }
 
-            .food-emoji {
-                font-size: 3rem;
+            h1 {
+                font-size: 1.8rem;
             }
 
-            .visualization {
-                max-width: 300px;
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .breadcrumb {
+                gap: 5px;
+                margin: 15px 0;
             }
 
             .breadcrumb-item {
-                padding: 6px 12px;
+                padding: 6px 10px;
+                font-size: 0.7rem;
+            }
+
+            .food-category-title {
+                font-size: 1rem;
+                padding: 12px 15px;
+            }
+
+            .food-row {
+                gap: 8px;
+                padding: 10px;
+            }
+
+            .food-item {
+                min-width: 70px;
+                max-width: 85px;
+                padding: 12px 8px;
+                border-radius: 12px;
+            }
+
+            .food-emoji {
+                font-size: 2rem;
+                margin-bottom: 5px;
+            }
+
+            .food-name {
                 font-size: 0.75rem;
+            }
+
+            .visualization {
+                max-width: 280px;
+                height: 280px;
+            }
+
+            .food-display {
+                font-size: 7rem;
+            }
+
+            .food-hint {
+                font-size: 1rem;
+            }
+
+            .info-panel {
+                padding: 15px;
+                margin: 15px auto;
+            }
+
+            .info-title {
+                font-size: 1.2rem;
+            }
+
+            .info-description {
+                font-size: 0.95rem;
+            }
+
+            .nav-buttons {
+                gap: 10px;
+            }
+
+            .nav-btn {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+
+            .bsd {
+                font-size: 1rem;
+                top: 10px;
+                right: 10px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .breadcrumb-item {
+                padding: 5px 8px;
+                font-size: 0.65rem;
+            }
+
+            .food-item {
+                min-width: 65px;
+                max-width: 75px;
+                padding: 10px 6px;
+            }
+
+            .food-emoji {
+                font-size: 1.8rem;
+            }
+
+            .food-name {
+                font-size: 0.7rem;
+            }
+
+            .visualization {
+                max-width: 250px;
+                height: 250px;
+            }
+
+            .food-display {
+                font-size: 5rem;
             }
         }
     </style>
@@ -814,119 +949,139 @@
 
         <!-- Food Selection -->
         <div class="food-selection" id="foodSelection">
-            <h3 class="food-category-title">🍔 ג'אנק פוד</h3>
-            <div class="food-row">
-                <div class="food-item" onclick="selectFood('🍕', 'פיצה')">
-                    <span class="food-emoji">🍕</span>
-                    <span class="food-name">פיצה</span>
+            <div class="food-category">
+                <div class="food-category-title" onclick="toggleCategory(this)">
+                    <span>🍔 ג'אנק פוד</span>
+                    <span class="category-arrow">▼</span>
                 </div>
-                <div class="food-item" onclick="selectFood('🧆', 'פלאפל')">
-                    <span class="food-emoji">🧆</span>
-                    <span class="food-name">פלאפל</span>
-                </div>
-                <div class="food-item" onclick="selectFood('🥙', 'שווארמה')">
-                    <span class="food-emoji">🥙</span>
-                    <span class="food-name">שווארמה</span>
-                </div>
-                <div class="food-item" onclick="selectFood('🥟', 'בורקס')">
-                    <span class="food-emoji">🥟</span>
-                    <span class="food-name">בורקס</span>
-                </div>
-                <div class="food-item" onclick="selectFood('🍔', 'המבורגר')">
-                    <span class="food-emoji">🍔</span>
-                    <span class="food-name">המבורגר</span>
-                </div>
-                <div class="food-item" onclick="selectFood('🍟', 'צ׳יפס')">
-                    <span class="food-emoji">🍟</span>
-                    <span class="food-name">צ׳יפס</span>
-                </div>
-                <div class="food-item" onclick="selectFood('🌭', 'נקניקייה')">
-                    <span class="food-emoji">🌭</span>
-                    <span class="food-name">נקניקייה</span>
-                </div>
-            </div>
-
-            <h3 class="food-category-title">🥐 מאפים מתוקים</h3>
-            <div class="food-row">
-                <div class="food-item" onclick="selectFood('🥐', 'קרואסון')">
-                    <span class="food-emoji">🥐</span>
-                    <span class="food-name">קרואסון</span>
-                </div>
-                <div class="food-item" onclick="selectFood('🥯', 'בייגל')">
-                    <span class="food-emoji">🥯</span>
-                    <span class="food-name">בייגל</span>
-                </div>
-                <div class="food-item" onclick="selectFood('🧁', 'קאפקייק')">
-                    <span class="food-emoji">🧁</span>
-                    <span class="food-name">קאפקייק</span>
-                </div>
-                <div class="food-item" onclick="selectFood('🍩', 'דונאט')">
-                    <span class="food-emoji">🍩</span>
-                    <span class="food-name">דונאט</span>
-                </div>
-                <div class="food-item" onclick="selectFood('🥮', 'עוגייה')">
-                    <span class="food-emoji">🥮</span>
-                    <span class="food-name">עוגייה</span>
-                </div>
-                <div class="food-item" onclick="selectFood('🍪', 'עוגיית שוקולד')">
-                    <span class="food-emoji">🍪</span>
-                    <span class="food-name">עוגיית שוקולד</span>
+                <div class="food-row">
+                    <div class="food-item" onclick="selectFood('🍕', 'פיצה')">
+                        <span class="food-emoji">🍕</span>
+                        <span class="food-name">פיצה</span>
+                    </div>
+                    <div class="food-item" onclick="selectFood('🧆', 'פלאפל')">
+                        <span class="food-emoji">🧆</span>
+                        <span class="food-name">פלאפל</span>
+                    </div>
+                    <div class="food-item" onclick="selectFood('🥙', 'שווארמה')">
+                        <span class="food-emoji">🥙</span>
+                        <span class="food-name">שווארמה</span>
+                    </div>
+                    <div class="food-item" onclick="selectFood('🥟', 'בורקס')">
+                        <span class="food-emoji">🥟</span>
+                        <span class="food-name">בורקס</span>
+                    </div>
+                    <div class="food-item" onclick="selectFood('🍔', 'המבורגר')">
+                        <span class="food-emoji">🍔</span>
+                        <span class="food-name">המבורגר</span>
+                    </div>
+                    <div class="food-item" onclick="selectFood('🍟', 'צ׳יפס')">
+                        <span class="food-emoji">🍟</span>
+                        <span class="food-name">צ׳יפס</span>
+                    </div>
+                    <div class="food-item" onclick="selectFood('🌭', 'נקניקייה')">
+                        <span class="food-emoji">🌭</span>
+                        <span class="food-name">נקניקייה</span>
+                    </div>
                 </div>
             </div>
 
-            <h3 class="food-category-title">🍰 קינוחים</h3>
-            <div class="food-row">
-                <div class="food-item" onclick="selectFood('🍰', 'עוגת גבינה')">
-                    <span class="food-emoji">🍰</span>
-                    <span class="food-name">עוגת גבינה</span>
+            <div class="food-category">
+                <div class="food-category-title" onclick="toggleCategory(this)">
+                    <span>🥐 מאפים מתוקים</span>
+                    <span class="category-arrow">▼</span>
                 </div>
-                <div class="food-item" onclick="selectFood('🎂', 'עוגת יום הולדת')">
-                    <span class="food-emoji">🎂</span>
-                    <span class="food-name">עוגת יום הולדת</span>
-                </div>
-                <div class="food-item" onclick="selectFood('🍨', 'גלידה')">
-                    <span class="food-emoji">🍨</span>
-                    <span class="food-name">גלידה</span>
-                </div>
-                <div class="food-item" onclick="selectFood('🍮', 'קרם ברולה')">
-                    <span class="food-emoji">🍮</span>
-                    <span class="food-name">קרם ברולה</span>
-                </div>
-                <div class="food-item" onclick="selectFood('🍫', 'שוקולד')">
-                    <span class="food-emoji">🍫</span>
-                    <span class="food-name">שוקולד</span>
-                </div>
-                <div class="food-item" onclick="selectFood('🍦', 'גביע גלידה')">
-                    <span class="food-emoji">🍦</span>
-                    <span class="food-name">גביע גלידה</span>
+                <div class="food-row">
+                    <div class="food-item" onclick="selectFood('🥐', 'קרואסון')">
+                        <span class="food-emoji">🥐</span>
+                        <span class="food-name">קרואסון</span>
+                    </div>
+                    <div class="food-item" onclick="selectFood('🥯', 'בייגל')">
+                        <span class="food-emoji">🥯</span>
+                        <span class="food-name">בייגל</span>
+                    </div>
+                    <div class="food-item" onclick="selectFood('🧁', 'קאפקייק')">
+                        <span class="food-emoji">🧁</span>
+                        <span class="food-name">קאפקייק</span>
+                    </div>
+                    <div class="food-item" onclick="selectFood('🍩', 'דונאט')">
+                        <span class="food-emoji">🍩</span>
+                        <span class="food-name">דונאט</span>
+                    </div>
+                    <div class="food-item" onclick="selectFood('🥮', 'עוגייה')">
+                        <span class="food-emoji">🥮</span>
+                        <span class="food-name">עוגייה</span>
+                    </div>
+                    <div class="food-item" onclick="selectFood('🍪', 'עוגיית שוקולד')">
+                        <span class="food-emoji">🍪</span>
+                        <span class="food-name">עוגיית שוקולד</span>
+                    </div>
                 </div>
             </div>
 
-            <h3 class="food-category-title">🍿 חטיפים</h3>
-            <div class="food-row">
-                <div class="food-item" onclick="selectFood('🍿', 'פופקורן')">
-                    <span class="food-emoji">🍿</span>
-                    <span class="food-name">פופקורן</span>
+            <div class="food-category">
+                <div class="food-category-title" onclick="toggleCategory(this)">
+                    <span>🍰 קינוחים</span>
+                    <span class="category-arrow">▼</span>
                 </div>
-                <div class="food-item" onclick="selectFood('🥨', 'בייגלה')">
-                    <span class="food-emoji">🥨</span>
-                    <span class="food-name">בייגלה</span>
+                <div class="food-row">
+                    <div class="food-item" onclick="selectFood('🍰', 'עוגת גבינה')">
+                        <span class="food-emoji">🍰</span>
+                        <span class="food-name">עוגת גבינה</span>
+                    </div>
+                    <div class="food-item" onclick="selectFood('🎂', 'עוגת יום הולדת')">
+                        <span class="food-emoji">🎂</span>
+                        <span class="food-name">עוגת יום הולדת</span>
+                    </div>
+                    <div class="food-item" onclick="selectFood('🍨', 'גלידה')">
+                        <span class="food-emoji">🍨</span>
+                        <span class="food-name">גלידה</span>
+                    </div>
+                    <div class="food-item" onclick="selectFood('🍮', 'קרם ברולה')">
+                        <span class="food-emoji">🍮</span>
+                        <span class="food-name">קרם ברולה</span>
+                    </div>
+                    <div class="food-item" onclick="selectFood('🍫', 'שוקולד')">
+                        <span class="food-emoji">🍫</span>
+                        <span class="food-name">שוקולד</span>
+                    </div>
+                    <div class="food-item" onclick="selectFood('🍦', 'גביע גלידה')">
+                        <span class="food-emoji">🍦</span>
+                        <span class="food-name">גביע גלידה</span>
+                    </div>
                 </div>
-                <div class="food-item" onclick="selectFood('🍭', 'סוכריה על מקל')">
-                    <span class="food-emoji">🍭</span>
-                    <span class="food-name">סוכריה על מקל</span>
+            </div>
+
+            <div class="food-category">
+                <div class="food-category-title" onclick="toggleCategory(this)">
+                    <span>🍿 חטיפים</span>
+                    <span class="category-arrow">▼</span>
                 </div>
-                <div class="food-item" onclick="selectFood('🍬', 'סוכריה')">
-                    <span class="food-emoji">🍬</span>
-                    <span class="food-name">סוכריה</span>
-                </div>
-                <div class="food-item" onclick="selectFood('🍡', 'מוצ׳י')">
-                    <span class="food-emoji">🍡</span>
-                    <span class="food-name">מוצ׳י</span>
-                </div>
-                <div class="food-item" onclick="selectFood('🧇', 'ופל')">
-                    <span class="food-emoji">🧇</span>
-                    <span class="food-name">ופל</span>
+                <div class="food-row">
+                    <div class="food-item" onclick="selectFood('🍿', 'פופקורן')">
+                        <span class="food-emoji">🍿</span>
+                        <span class="food-name">פופקורן</span>
+                    </div>
+                    <div class="food-item" onclick="selectFood('🥨', 'בייגלה')">
+                        <span class="food-emoji">🥨</span>
+                        <span class="food-name">בייגלה</span>
+                    </div>
+                    <div class="food-item" onclick="selectFood('🍭', 'סוכריה על מקל')">
+                        <span class="food-emoji">🍭</span>
+                        <span class="food-name">סוכריה על מקל</span>
+                    </div>
+                    <div class="food-item" onclick="selectFood('🍬', 'סוכריה')">
+                        <span class="food-emoji">🍬</span>
+                        <span class="food-name">סוכריה</span>
+                    </div>
+                    <div class="food-item" onclick="selectFood('🍡', 'מוצ׳י')">
+                        <span class="food-emoji">🍡</span>
+                        <span class="food-name">מוצ׳י</span>
+                    </div>
+                    <div class="food-item" onclick="selectFood('🧇', 'ופל')">
+                        <span class="food-emoji">🧇</span>
+                        <span class="food-name">ופל</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1052,11 +1207,24 @@
     </div>
 
     <script>
+        function toggleCategory(element) {
+            var category = element.parentElement;
+            var allCategories = document.querySelectorAll('.food-category');
+            
+            allCategories.forEach(function(cat) {
+                if (cat !== category) {
+                    cat.classList.remove('open');
+                }
+            });
+            
+            category.classList.toggle('open');
+        }
+
         function resetApp() {
             alert('מאפס את האפליקציה');
             currentLevel = -1;
             selectedFood = null;
-            document.getElementById('foodSelection').style.display = 'grid';
+            document.getElementById('foodSelection').style.display = 'flex';
             document.getElementById('zoomContainer').classList.remove('active');
             updateBreadcrumb();
         }
